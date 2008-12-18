@@ -1,0 +1,8 @@
+Description:
+    Generate migrations for +is_taggable+ plugin
+
+Example:
+    ./script/generate is_taggable .
+
+    This will create:
+        db/migrate/XXXXXXXXXX_create_taggables.rb
