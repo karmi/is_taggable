@@ -37,11 +37,12 @@ module IsTaggable
         # Find all records tagged with a +'tag'+ or ['tag one', 'tag two']
         # Pass either String for single tag or Array for multiple tags
         def self.find_all_tagged_with(tag_or_tags)
+          return [] if tag_or_tags.nil? || tag_or_tags.empty?
           case tag_or_tags
           when Array, IsTaggable::TagList
-            all(:include => ['tags', 'taggings']).select { |record| tag_or_tags.all? { |tag| record.tags.map(&:name).include?(tag) } }
-          when String
-            all(:include => ['tags', 'taggings']).select { |record| record.tags.map(&:name).include?(tag_or_tags)  }
+            all(:include => ['tags', 'taggings']).select { |record| tag_or_tags.all? { |tag| record.tags.map(&:name).include?(tag) } } || []
+          else
+            all(:include => ['tags', 'taggings']).select { |record| record.tags.map(&:name).include?(tag_or_tags)  } || []
           end
         end
 
