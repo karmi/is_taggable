@@ -38,7 +38,7 @@ module IsTaggable
         # Pass either String for single tag or Array for multiple tags
         def self.find_all_tagged_with(tag_or_tags)
           case tag_or_tags
-          when Array
+          when Array, IsTaggable::TagList
             all(:include => ['tags', 'taggings']).select { |record| tag_or_tags.all? { |tag| record.tags.map(&:name).include?(tag) } }
           when String
             all(:include => ['tags', 'taggings']).select { |record| record.tags.map(&:name).include?(tag_or_tags)  }
