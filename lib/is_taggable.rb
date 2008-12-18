@@ -45,6 +45,14 @@ module IsTaggable
           end
         end
 
+        # Find all records tagged with the same tags as current object,
+        # *excluding* the current object (for things like "Related articles")
+        def find_tagged_alike
+          self.class.all(:include => ['tags', 'taggings'],
+                         :conditions => ["id != '?'", self.id]).
+                         select { |record| self.tag_list.all? { |tag| record.tags.map(&:name).include?(tag) } }
+        end
+
       end
     end
 
