@@ -1,0 +1,65 @@
+= Is Taggable
+
+Rails plugin for working easily with tagging stuff in your application.
+
+Stores _tags_ in separate table and implements a polymorphic interface _taggable_ for attaching tags to ActiveRecord objects.
+
+See example below.
+
+
+== Usage
+
+Install the plugin by cloning the repository and running
+
+    script/generate is_taggable .
+    
+To generate migration tables. The dot _is_ necessary.
+
+
+== Example
+
+In your _Article_ model:
+
+    class Article < ActiveRecord::Base
+      is_taggable :tags
+    end
+
+Then:
+
+    >> Tag.all
+      Tag Load (0.3ms)   SELECT * FROM `tags` 
+    => [#<Tag id: 1, name: "one", kind: "tag", ...>, #<Tag id: 2, name: "two", kind: "tag", ...>]
+
+    >> a = Article.first
+      Article Load (0.4ms)   SELECT * FROM `articles` LIMIT 1
+    => #<Article id: 1, title: ....>
+
+    >> a.tag_list
+      Article Load (0.4ms)   SELECT * FROM `articles` LIMIT 1
+      Tag Load (0.5ms)   SELECT `tags`.* FROM `tags` INNER JOIN taggings ON tags.id = taggings.tag_id WHERE ((`taggings`.taggable_type = 'Article') AND (`taggings`.taggable_id = 1)) AND (`tags`.`kind` = 'tag') 
+    => ["one"]
+
+    >> a.tag_list = ['one', 'two']
+    => ["one", "two"]
+
+    >> a.save
+      ...
+      Tagging Create (0.3ms)   INSERT INTO `taggings` (`updated_at`, `tag_id`, `taggable_type`, `taggable_id`, `created_at`) VALUES('2008-12-18 16:51:50', 2, 'Article', 1, '2008-12-18 16:51:50')
+      ...
+    => true
+    
+    >> Article.find_all_tagged_with 'one'
+      Article Load (1.9ms)   SELECT * FROM `articles` 
+      Tagging Load (66.6ms)   SELECT `taggings`.* FROM `taggings` WHERE (`taggings`.`taggable_id` IN (1,2,3) and `taggings`.`taggable_type` = 'Article') 
+      Tag Load (0.4ms)   SELECT * FROM `tags` WHERE (`tags`.`id` IN (1,2)) 
+    => [#<Article id: 1, title: "Lorem...", ...>]
+
+    >> Article.find_all_tagged_with ['one', 'two']
+      Article Load (2.1ms)   SELECT * FROM `articles` 
+      Tagging Load (2.9ms)   SELECT `taggings`.* FROM `taggings` WHERE (`taggings`.`taggable_id` IN (1,2,3) and `taggings`.`taggable_type` = 'Article') 
+      Tag Load (0.3ms)   SELECT * FROM `tags` WHERE (`tags`.`id` IN (1,2)) 
+    => [#<Article id: 1, title: "Lorem...", ...>]
+    
+    
+
+Copyright (c) 2008 James Golick, released under the MIT license
