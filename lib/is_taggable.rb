@@ -33,6 +33,18 @@ module IsTaggable
           define_method("#{k}_list")  { get_tag_list(k) }
           define_method("#{k}_list=") { |new_list| set_tag_list(k, new_list) }
         end
+
+        # Find all records tagged with a +'tag'+ or ['tag one', 'tag two']
+        # Pass either String for single tag or Array for multiple tags
+        def self.find_all_tagged_with(tag_or_tags)
+          case tag_or_tags
+          when Array
+            all(:include => ['tags', 'taggings']).select { |record| tag_or_tags.all? { |tag| record.tags.map(&:name).include?(tag) } }
+          when String
+            all(:include => ['tags', 'taggings']).select { |record| record.tags.map(&:name).include?(tag_or_tags)  }
+          end
+        end
+
       end
     end
 
