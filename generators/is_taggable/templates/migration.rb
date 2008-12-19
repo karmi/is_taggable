@@ -1,3 +1,5 @@
+# = Migration for the is_taggable plugin
+# 
 class CreateTaggables < ActiveRecord::Migration
   def self.up
 

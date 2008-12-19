@@ -4,7 +4,9 @@ Rails plugin for working easily with tagging stuff in your application.
 
 Stores _tags_ in separate table and implements a polymorphic interface _taggable_ for attaching tags to ActiveRecord objects.
 
-See example below.
+Comes with a generator for database migrations and autocompleting tags in forms (with the <tt>--with-autocompleter</tt> option)
+
+See examples below.
 
 
 == Usage
@@ -60,6 +62,16 @@ Then:
       Tag Load (0.3ms)   SELECT * FROM `tags` WHERE (`tags`.`id` IN (1,2)) 
     => [#<Article id: 1, title: "Lorem...", ...>]
     
-    
 
-Copyright (c) 2008 James Golick, released under the MIT license
+When you run generator with the <tt>--with-autocompleter</tt> option, also a controller and view are generated. 
+You can use it like this then:
+
+    <% form_for(@my_object) do |f| %>
+      <%= f.text_area :tag_list %>
+      <%= taggable_autocompleter_for('my_object_tag_list') %>
+    <% end %>
+
+Tags matching input will be then added to your input/textarea. Assumes you separate tags with commas (,).
+
+
+Copyright (c) 2008 James Golick & Karel Minarik, released under the MIT license

@@ -6,3 +6,9 @@ Example:
 
     This will create:
         db/migrate/XXXXXXXXXX_create_taggables.rb
+
+		If the --with-autocomplete options is passed, it will generate this as well:
+				create  app/controllers/taggable_controller.rb
+				create  app/views/taggable
+				create  app/views/taggable/autocomplete.js.erb
+				create  app/helpers/taggable_helper.rb
