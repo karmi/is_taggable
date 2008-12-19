@@ -4,10 +4,10 @@ class IsTaggableGenerator < Rails::Generator::NamedBase
     record do |m|
 
       # * Generate migration
-      # m.migration_template 'migration.rb', "db/migrate", {
-      #   :assigns => { :migration_name => 'CreateTaggables' },
-      #   :migration_file_name => 'create_taggables'
-      # }
+      m.migration_template 'migration.rb', "db/migrate", {
+        :assigns => { :migration_name => 'CreateTaggables' },
+        :migration_file_name => 'create_taggables'
+      }
 
       # * Generate controller and view for Scriptaculous autocompleter
       if options[:with_autocompleter]
