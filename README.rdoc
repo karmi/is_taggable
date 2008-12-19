@@ -61,6 +61,14 @@ Then:
       Tagging Load (2.9ms)   SELECT `taggings`.* FROM `taggings` WHERE (`taggings`.`taggable_id` IN (1,2,3) and `taggings`.`taggable_type` = 'Article') 
       Tag Load (0.3ms)   SELECT * FROM `tags` WHERE (`tags`.`id` IN (1,2)) 
     => [#<Article id: 1, title: "Lorem...", ...>]
+
+    >> Article.first.find_tagged_alike
+      SQL (0.5ms)   SELECT count(*) AS count_all FROM `tags` INNER JOIN taggings ON tags.id = taggings.tag_id WHERE ((`taggings`.taggable_type = 'Article') AND (`taggings`.taggable_id = 1)) 
+      Article Load (1.5ms)   SELECT * FROM `articles` WHERE (id != '1') 
+      Tagging Load (2.9ms)   SELECT `taggings`.* FROM `taggings` WHERE (`taggings`.`taggable_id` IN (1,2,3) and `taggings`.`taggable_type` = 'Article') 
+      Tag Load (0.3ms)   SELECT * FROM `tags` WHERE (`tags`.`id` IN (1,2,3)) 
+      Tag Load (0.4ms)   SELECT `tags`.* FROM `tags` INNER JOIN taggings ON tags.id = taggings.tag_id WHERE ((`taggings`.taggable_type = 'Article') AND (`taggings`.taggable_id = 1)) AND (`tags`.`kind` = 'tag') 
+    => [#<Article id: 201, title: "Another...", ...>]
     
 
 When you run generator with the <tt>--with-autocompleter</tt> option, also a controller and view are generated. 

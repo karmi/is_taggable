@@ -36,6 +36,7 @@ module IsTaggable
 
         # Find all records tagged with a +'tag'+ or ['tag one', 'tag two']
         # Pass either String for single tag or Array for multiple tags
+        # TODO : Add option all x any
         def self.find_all_tagged_with(tag_or_tags)
           return [] if tag_or_tags.nil? || tag_or_tags.empty?
           case tag_or_tags
@@ -48,10 +49,13 @@ module IsTaggable
 
         # Find all records tagged with the same tags as current object,
         # *excluding* the current object (for things like "Related articles")
+        # TODO : Add option all x any
+        # TODO : Remove hardcoded +tag_list+ kind of tags, could be any kind
         def find_tagged_alike
+          return [] if self.tags.empty?
           self.class.all(:include => ['tags', 'taggings'],
                          :conditions => ["id != '?'", self.id]).
-                         select { |record| self.tag_list.all? { |tag| record.tags.map(&:name).include?(tag) } }
+                         select { |record| self.tag_list.all? { |tag| record.tags.map(&:name).include?(tag) } } || []
         end
 
       end
