@@ -1,3 +1,5 @@
+# TODO : Tests for the logic added to giraffesoft's code
+
 path = File.expand_path(File.dirname(__FILE__))
 $LOAD_PATH << path unless $LOAD_PATH.include?(path)
 require 'tag'
@@ -36,7 +38,13 @@ module IsTaggable
 
         # Find all records tagged with a +'tag'+ or ['tag one', 'tag two']
         # Pass either String for single tag or Array for multiple tags
-        # TODO : Add option all x any
+        # Returns records with ALL passed tags by default,
+        # pass the <tt>:tags => :any</tt> option to return
+        # records with ANY passed tag.
+        # == Example:
+        #   Article.find_all_tagged_with( 'obama' )
+        #   Article.find_all_tagged_with( ['obama', 'bush'] )
+        #   Article.find_all_tagged_with( ['obama', 'gore'], :tags => :any )
         def self.find_all_tagged_with(tag_or_tags, options={})
           return [] if tag_or_tags.nil? || tag_or_tags.empty?
           case tag_or_tags
@@ -52,6 +60,13 @@ module IsTaggable
 
         # Find all records tagged with the same tags as current object,
         # *excluding* the current object (for things like "Related articles")
+        # Returns records with ALL passed tags by default,
+        # pass the <tt>:tags => :any</tt> option to return
+        # records with ANY passed tag.
+        # == Example:
+        #   @article = Article.first
+        #   @article.find_tagged_alike
+        #   @article.find_tagged_alike(:any)
         # TODO : Remove hardcoded +tag_list+ kind of tags, could be any kind
         def find_tagged_alike(finder=:all)
           return [] if self.tags.empty?
