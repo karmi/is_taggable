@@ -37,11 +37,14 @@ module IsTaggable
         # Find all records tagged with a +'tag'+ or ['tag one', 'tag two']
         # Pass either String for single tag or Array for multiple tags
         # TODO : Add option all x any
-        def self.find_all_tagged_with(tag_or_tags)
+        def self.find_all_tagged_with(tag_or_tags, options={})
           return [] if tag_or_tags.nil? || tag_or_tags.empty?
           case tag_or_tags
           when Array, IsTaggable::TagList
-            all(:include => ['tags', 'taggings']).select { |record| tag_or_tags.all? { |tag| record.tags.map(&:name).include?(tag) } } || []
+            finder = (options[:tags] && options[:tags] == :any) ? :any : :all
+            all(:include => ['tags', 'taggings']).select do |record|
+              tag_or_tags.send(:"#{finder}?") { |tag| record.tags.map(&:name).include?(tag) }
+            end || []
           else
             all(:include => ['tags', 'taggings']).select { |record| record.tags.map(&:name).include?(tag_or_tags)  } || []
           end
@@ -49,13 +52,13 @@ module IsTaggable
 
         # Find all records tagged with the same tags as current object,
         # *excluding* the current object (for things like "Related articles")
-        # TODO : Add option all x any
         # TODO : Remove hardcoded +tag_list+ kind of tags, could be any kind
-        def find_tagged_alike
+        def find_tagged_alike(finder=:all)
           return [] if self.tags.empty?
+          finder = finder == :any ? :any : :all
           self.class.all(:include => ['tags', 'taggings'],
                          :conditions => ["id != '?'", self.id]).
-                         select { |record| self.tag_list.all? { |tag| record.tags.map(&:name).include?(tag) } } || []
+               select { |record| self.tag_list.send(:"#{finder}?") { |tag| record.tags.map(&:name).include?(tag) } } || []
         end
 
       end
